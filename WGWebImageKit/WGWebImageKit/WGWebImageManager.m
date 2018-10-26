@@ -45,7 +45,7 @@
         //不存在,网络请求
         [self requestImageWithUrl:imageUrl completion:^(UIImage *image) {
             
-            NSLog(@"----网络请求成功,取得图片");
+            NSLog(@"----网络请求完成");
             if (image) {
                 NSLog(@"----请求成功,准备缓存图片");
                 //缓存图片

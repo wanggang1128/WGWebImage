@@ -15,12 +15,12 @@ NSString *const midPath =@"WGFile";
 //默认图片缓存路径文件夹
 NSString *const defaultCachePath = @"ImageCache";
 
-//单位
+//单位转换
 static const CGFloat unit = 1024.0;
 
 @interface WGCacheManager()
 
-//
+//默认缓存路径
 @property (nonatomic ,copy) NSString *cachePath;
 @property (nonatomic ,strong) dispatch_queue_t operationQueue;
 
@@ -83,7 +83,7 @@ static const CGFloat unit = 1024.0;
     }
 }
 
-#pragma mark -查看缓存
+#pragma mark -查看缓存是否存在
 //默认路径下,是否已缓存某图片
 - (BOOL)isExistsCacheWithKey:(NSString *)key{
     
@@ -177,6 +177,84 @@ static const CGFloat unit = 1024.0;
     }
 }
 
+#pragma mark -清除缓存
+//清除默认路径下的缓存,无回调
+- (void)clearCache{
+    
+    [self clearCacheWithPath:self.cachePath complete:nil];
+}
+
+//清除默认路径下的缓存,有回调
+- (void)clearCacheComplete:(ClearCacheBlock)complete{
+    
+    [self clearCacheWithPath:self.cachePath complete:complete];
+}
+
+//清除指定路径下的缓存,无回调
+- (void)clearCacheWithPath:(NSString *)path{
+    [self clearCacheWithPath:path complete:nil];
+}
+//清除指定路径下的缓存,有回调
+- (void)clearCacheWithPath:(NSString *)path complete:(ClearCacheBlock)complete{
+    if (!path) {
+        return;
+    }
+    dispatch_async(self.operationQueue, ^{
+        
+        NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath:path];
+        for (NSString *fileName in enumerator) {
+            NSString *filePath = [path stringByAppendingPathComponent:fileName];
+            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        }
+    });
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"----清除缓存成功");
+        if (complete) {
+            complete();
+        }
+    });
+}
+
+//清除默认路径下某一个图片的缓存,无回调
+- (void)clearSingleImageWithKey:(NSString *)key{
+    
+    [self clearSingleImageWithKey:key path:self.cachePath complete:nil];
+}
+
+//清除默认路径下某一个图片的缓存,有回调
+- (void)clearSingleImageWithKey:(NSString *)key complete:(ClearCacheBlock)complete{
+    
+    [self clearSingleImageWithKey:key path:self.cachePath complete:complete];
+}
+
+//清除指定路径下某一个图片的缓存,无回调
+- (void)clearSingleImageWithKey:(NSString *)key path:(NSString *)path{
+    
+    [self clearSingleImageWithKey:key path:path complete:nil];
+}
+
+//清除指定路径下某一个图片的缓存,有回调
+- (void)clearSingleImageWithKey:(NSString *)key path:(NSString *)path complete:(ClearCacheBlock)complete{
+    if (!key || !path ) {
+        return;
+    }
+    
+    dispatch_async(self.operationQueue, ^{
+        
+        NSString *filePath = [[self getCachePath:path md5Key:key] stringByDeletingPathExtension];
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+    });
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSLog(@"----清除某一个图片的缓存成功");
+        if (complete) {
+            complete();
+        }
+    });
+}
+
 #pragma mark -缓存
 //缓存机制:把imageurl作为唯一key,并加密作为图片存储文件路径
 - (void)cacheContent:(NSObject *)content key:(NSString *)key path:(NSString *)path completion:(CacheIsSuccess)completion{
@@ -223,11 +301,7 @@ static const CGFloat unit = 1024.0;
     }else if ([content isKindOfClass:[UIImage class]]) {
         return [UIImageJPEGRepresentation((UIImage *)content,(CGFloat)1.0) writeToFile:path atomically:YES];
     }else if ([content conformsToProtocol:@protocol(NSCoding)]) {
-        if (@available(iOS 11.0, *)) {
-            return [[NSKeyedArchiver archivedDataWithRootObject:content requiringSecureCoding:YES error:nil] writeToFile:path atomically:YES];
-        } else {
-            // Fallback on earlier versions
-        }
+        return [NSKeyedArchiver archiveRootObject:content toFile:path];
     }else {
         [NSException raise:@"非法的文件内容" format:@"文件类型%@异常。", NSStringFromClass([content class])];
         return NO;

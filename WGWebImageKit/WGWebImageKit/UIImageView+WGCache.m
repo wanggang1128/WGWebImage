@@ -63,7 +63,7 @@
     __weak typeof(self) weakSelf = self;
     [[WGWebImageManager share] downloadImageWithUrl:imageUrl path:path completion:^(UIImage *image) {
         
-        NSLog(@"----UIImageView+WGCache拿到h返回的图片");
+        NSLog(@"----UIImageView+WGCache拿到返回的图片");
         if (image) {
             weakSelf.image = image;
             [weakSelf setNeedsLayout];

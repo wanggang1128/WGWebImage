@@ -13,6 +13,8 @@
 typedef void(^CacheIsSuccess)(BOOL isSuccess);
 //从缓存中获取图片data
 typedef void(^ReturnCachaData)(NSData *data, NSString *filePath);
+//清除缓存回调
+typedef void(^ClearCacheBlock)(void);
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -创建文件夹
 - (void)createFileAtPath:(NSString *)path;
 
-#pragma mark -查看缓存
+#pragma mark -查看缓存是否存在
 //默认路径下,是否已缓存某图片
 - (BOOL)isExistsCacheWithKey:(NSString *)key;
 
@@ -60,6 +62,31 @@ NS_ASSUME_NONNULL_BEGIN
 
 //大小单位换算
 - (NSString *)imageUnitWithSize:(float)size;
+
+#pragma mark -清除缓存
+//清除默认路径下的缓存,无回调
+- (void)clearCache;
+
+//清除默认路径下的缓存,有回调
+- (void)clearCacheComplete:(ClearCacheBlock)complete;
+
+//清除指定路径下的缓存,无回调
+- (void)clearCacheWithPath:(NSString *)path;
+
+//清除指定路径下的缓存,有回调
+- (void)clearCacheWithPath:(NSString *)path complete:(ClearCacheBlock)complete;
+
+//清除默认路径下某一个图片的缓存,无回调
+- (void)clearSingleImageWithKey:(NSString *)key;
+
+//清除默认路径下某一个图片的缓存,有回调
+- (void)clearSingleImageWithKey:(NSString *)key complete:(ClearCacheBlock)complete;
+
+//清除指定路径下某一个图片的缓存,无回调
+- (void)clearSingleImageWithKey:(NSString *)key path:(NSString *)path;
+
+//清除指定路径下某一个图片的缓存,有回调
+- (void)clearSingleImageWithKey:(NSString *)key path:(NSString *)path complete:(ClearCacheBlock)complete;
 
 #pragma mark -缓存
 - (void)cacheContent:(NSObject *)content key:(NSString *)key path:(NSString *)path completion:(CacheIsSuccess)completion;
