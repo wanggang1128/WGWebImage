@@ -14,9 +14,10 @@
 NSString *const midPath =@"WGFile";
 //默认图片缓存路径文件夹
 NSString *const defaultCachePath = @"ImageCache";
-
 //单位转换
 static const CGFloat unit = 1024.0;
+//缓存文件最大存储时间
+static const NSInteger defauleMaxCacheTime = 60*60*24*7;
 
 @interface WGCacheManager()
 
@@ -44,6 +45,18 @@ static const CGFloat unit = 1024.0;
     if (self) {
         //创建缓存文件夹
         [self createFileAtPath:self.cachePath];
+        
+        /*
+         UIApplicationWillTerminateNotification
+         应用在前台,双击 Home 键 ,终止应用时调用
+         应用在前台,单击 Home 键,进入桌面 , 再终止应用时不会调用
+         
+         UIApplicationDidEnterBackgroundNotification
+         应用进入后台的时候调用
+         */
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(automaticClearCache) name:UIApplicationWillTerminateNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(cleanCacheInBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+
     }
     return self;
 }
@@ -126,7 +139,70 @@ static const CGFloat unit = 1024.0;
     });
 }
 
+//获取默认路径下的所有图片文件
+- (NSArray *)getCacheImageFileArray{
+    return [self getCacheImageFileArrayWithPath:self.cachePath];
+}
+
+//获取指定路径下的所有图片文件
+- (NSArray *)getCacheImageFileArrayWithPath:(NSString *)path{
+    
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath:path];
+    for (NSString *fileName in enumerator) {
+        if (fileName.length == 32) {
+            NSString *filePath = [path stringByAppendingPathComponent:fileName];
+            [arr addObject:filePath];
+        }
+    }
+    return arr;
+}
+
+//获取默认路径下某一图片的属性信息
+- (NSDictionary *)getCacheImageInfoWithKey:(NSString *)key{
+    return [self getCacheImageInfoWithKey:key path:self.cachePath];
+}
+
+//获取指定路径下某一图片的属性信息
+- (NSDictionary *)getCacheImageInfoWithKey:(NSString *)key path:(NSString *)path{
+    
+    if (!key || !path) {
+        return nil;
+    }
+    NSString *filePath = [[self getCachePath:path md5Key:key] stringByDeletingPathExtension];
+    NSDictionary *infoDic = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+    return infoDic;
+}
+
 #pragma mark -计算缓存大小与个数
+//获取沙盒总空间大小
+- (NSUInteger)getAllSandboxSpace{
+    NSUInteger size = 0;
+    NSString *homePath = [NSFileManager homePath];
+    NSError *error = nil;
+    NSDictionary *info = [[NSFileManager defaultManager] attributesOfFileSystemForPath:homePath error:&error];
+    if (error) {
+        NSLog(@"获取沙盒总空间大小error: %@", error.localizedDescription);
+    }else{
+         size = [[info valueForKey:NSFileSystemSize] floatValue];
+    }
+    return size;
+}
+
+//获取沙盒总空间剩余大小
+- (NSUInteger)getFreeSandboxSpace{
+    NSUInteger size = 0;
+    NSString *homePath = [NSFileManager homePath];
+    NSError *error = nil;
+    NSDictionary *info = [[NSFileManager defaultManager] attributesOfFileSystemForPath:homePath error:&error];
+    if (error) {
+        NSLog(@"获取沙盒总空间剩余大小error: %@", error.localizedDescription);
+    }else{
+        size = [[info valueForKey:NSFileSystemFreeSize] floatValue];
+    }
+    return size;
+}
+
 //获取默认路径下缓存图片的数量
 - (NSUInteger)getImageCountInCache{
     NSUInteger count = [self getImageCountWithCachePath:self.cachePath];
@@ -136,10 +212,11 @@ static const CGFloat unit = 1024.0;
 //获取指定路径下缓存图片的数量
 - (NSUInteger)getImageCountWithCachePath:(NSString *)path{
     __block NSUInteger count = 0;
-    //同步任务
+    //sync
     dispatch_sync(self.operationQueue, ^{
         NSDirectoryEnumerator *fileEnumerator = [[NSFileManager defaultManager] enumeratorAtPath:path];
-        count = [fileEnumerator allObjects].count;
+        count = [[fileEnumerator allObjects] count];
+
     });
     return count;
 }
@@ -175,6 +252,114 @@ static const CGFloat unit = 1024.0;
     } else { // >= 1KB
         return [NSString stringWithFormat:@"%.2fKB", size / unit];
     }
+}
+
+#pragma mark -超过最大缓存时间,清除缓存
+//自动清除默认路径下的所有过期图片
+- (void)automaticClearCache{
+     NSLog(@"UIApplicationWillTerminateNotification,自动清理默认路径下所有过期图片");
+    [self clearCacheWithTime:defauleMaxCacheTime complete:nil];
+}
+
+//设置过期时间,清除默认路径下的所有过期图片
+- (void)clearCacheWithTime:(NSTimeInterval)time complete:(ClearCacheBlock)complete{
+    
+    [self clearCacheWithTime:time path:self.cachePath complete:complete];
+}
+
+//设置过期时间,清除指定路径下的所有过期图片
+- (void)clearCacheWithTime:(NSTimeInterval)time path:(NSString *)path complete:(ClearCacheBlock)complete{
+    NSLog(@"超时,准备清除所有过期图片");
+    if (!path || !time) {
+        return;
+    }
+    dispatch_async(self.operationQueue, ^{
+        NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-time];
+        
+        NSDirectoryEnumerator *fileEnumerator = [[NSFileManager defaultManager] enumeratorAtPath:path];
+        
+        for (NSString *fileName in fileEnumerator) {
+            NSString *filePath = [path stringByAppendingPathComponent:fileName];
+            NSDictionary *info = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+            
+            NSDate *currentDate = [info valueForKey:NSFileModificationDate];
+            
+            if ([[currentDate laterDate:expirationDate] isEqualToDate:expirationDate]) {
+                //更晚的时间是截止时间,图片的时间在截止时间前
+                [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+             NSLog(@"清除所有过期图片完成");
+            if (complete) {
+                complete();
+            }
+        });
+    });
+}
+
+//设置过期时间,清除默认路径下的某个过期图片,无回调
+- (void)cleanSingleImageWithTime:(NSTimeInterval)time key:(NSString *)key{
+    
+    [self cleanSingleImageWithTime:time key:key path:self.cachePath complete:nil];
+}
+
+//设置过期时间,清除默认路径下的某个过期图片
+- (void)cleanSingleImageWithTime:(NSTimeInterval)time key:(NSString *)key complete:(ClearCacheBlock)complete{
+    
+    [self cleanSingleImageWithTime:time key:key path:self.cachePath complete:complete];
+}
+
+//设置过期时间,清除指定路径下的某个过期图片
+- (void)cleanSingleImageWithTime:(NSTimeInterval)time key:(NSString *)key path:(NSString *)path complete:(ClearCacheBlock)complete{
+    
+    if (!time||!key||!path){
+        return;
+    }
+    
+    dispatch_async(self.operationQueue, ^{
+        
+        NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-time];
+        NSString *filePath = [[self getCachePath:path md5Key:key] stringByDeletingPathExtension];
+        NSDictionary *info = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil];
+        
+        NSDate *currentDate = [info objectForKey:NSFileModificationDate];
+        
+        if ([[currentDate laterDate:expirationDate] isEqualToDate:expirationDate]){
+            [[NSFileManager defaultManager]removeItemAtPath:filePath error:nil];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (complete) {
+                complete();
+            }
+        });
+    });
+}
+
+//接收到进入后台通知，后台清理缓存方法
+- (void)cleanCacheInBackgroundWith:(NSString *)path{
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if (!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return;
+    }
+    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
+    __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
+        // Clean up any unfinished task business by marking where you
+        // stopped or ending the task outright.
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+    // Start the long-running task and return immediately.
+    [self clearCacheWithTime:defauleMaxCacheTime path:path complete:^{
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+}
+
+- (void)cleanCacheInBackground{
+    NSLog(@"UIApplicationDidEnterBackgroundNotification,自动清理默认路径下所有过期图片");
+    [self cleanCacheInBackgroundWith:self.cachePath];
 }
 
 #pragma mark -清除缓存

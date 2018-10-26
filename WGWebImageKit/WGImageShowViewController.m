@@ -38,6 +38,8 @@
 @property (nonatomic, strong) UIButton *clearAllBtn;
 @property (nonatomic, strong) UIButton *clearBtn;
 
+@property (nonatomic, strong) UIButton *getInfoBtn;
+
 @end
 
 @implementation WGImageShowViewController
@@ -59,14 +61,16 @@
     [self.view addSubview:self.showNumLab1];
     [self.view addSubview:self.clearAllBtn];
     [self.view addSubview:self.clearBtn];
+    [self.view addSubview:self.getInfoBtn];
     
-    [self.imgView1 wg_setImageWithURL:IMAGE_1];
-    
-    [self.imgView2 wg_setImageWithURL:IMAGE_2 placeholdImage:[UIImage imageNamed:@"default.jpg"] complete:^(UIImage *image) {
-
+    [self.imgView1 wg_setImageWithURL:IMAGE_1 complete:^(UIImage *image) {
         [self showImageInfo:nil];
     }];
-
+    
+    [self.imgView2 wg_setImageWithURL:IMAGE_2 placeholdImage:[UIImage imageNamed:@"default.jpg"] complete:^(UIImage *image) {
+        
+        [self showImageInfo:nil];
+    }];
     [self.imgView3 wg_setImageWithURL:IMAGE_3 placeholdImage:[UIImage imageNamed:@"default.jpg"] cachePath:CustomPath complete:^(UIImage *image) {
 
         [self showImageInfo:CustomPath];
@@ -121,6 +125,28 @@
                 NSLog(@"----清除默认路径下缓存回调");
                 [self showImageInfo:CustomPath];
             }];
+            
+            break;
+        }
+        case 102:{
+            //获取缓存信息
+            
+            //获取默认路径下的所有图片文件
+            NSArray *arr1 = [[WGCacheManager share] getCacheImageFileArray];
+            
+            //获取指定路径下的所有图片文件
+            NSArray *arr2 = [[WGCacheManager share] getCacheImageFileArrayWithPath:CustomPath];
+            
+            //获取默认路径下某一图片的属性信息
+            NSDictionary *dic1 = [[WGCacheManager share] getCacheImageInfoWithKey:IMAGE_1];
+            
+            //获取指定路径下某一图片的属性信息
+            NSDictionary *dic2 = [[WGCacheManager share] getCacheImageInfoWithKey:IMAGE_3 path:CustomPath];
+            
+            NSString *remind = [NSString stringWithFormat:@"获取默认路径下的所有图片文件%@\n获取指定路径下的所有图片文件%@\n获取默认路径下某一图片的属性信息%@\n获取指定路径下某一图片的属性信息%@", arr1, arr2, dic1, dic2];
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"缓存信息" message:remind delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alert show];
             
             break;
         }
@@ -208,6 +234,18 @@
         _clearAllBtn.tag = 101;
     }
     return _clearAllBtn;
+}
+
+- (UIButton *)getInfoBtn{
+    if (!_getInfoBtn) {
+        _getInfoBtn = [[UIButton alloc] initWithFrame:CGRectMake(30, 500, WGWIDTH-60, 30)];
+        _getInfoBtn.backgroundColor = [UIColor cyanColor];
+        [_getInfoBtn setTitle:@"获取缓存信息" forState:UIControlStateNormal];
+        [_getInfoBtn addTarget:self action:@selector(clearBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [_getInfoBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        _getInfoBtn.tag = 102;
+    }
+    return _getInfoBtn;
 }
 
 @end
