@@ -9,12 +9,18 @@
 /* Begin PBXBuildFile section */
 		3233037B21803F3E006E2219 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3233037A21803F3E006E2219 /* AppDelegate.m */; };
 		3233037E21803F3E006E2219 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3233037D21803F3E006E2219 /* ViewController.m */; };
-		3233038121803F3E006E2219 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3233037F21803F3E006E2219 /* Main.storyboard */; };
 		3233038321803F3F006E2219 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3233038221803F3F006E2219 /* Assets.xcassets */; };
 		3233038621803F3F006E2219 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3233038421803F3F006E2219 /* LaunchScreen.storyboard */; };
 		3233038921803F3F006E2219 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3233038821803F3F006E2219 /* main.m */; };
 		3233039321803F3F006E2219 /* WGWebImageKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3233039221803F3F006E2219 /* WGWebImageKitTests.m */; };
 		3233039E21803F3F006E2219 /* WGWebImageKitUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3233039D21803F3F006E2219 /* WGWebImageKitUITests.m */; };
+		323303AD2180418C006E2219 /* WGImageShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 323303AC2180418C006E2219 /* WGImageShowViewController.m */; };
+		323303B121804FA5006E2219 /* NSFileManager+Path.m in Sources */ = {isa = PBXBuildFile; fileRef = 323303B021804FA5006E2219 /* NSFileManager+Path.m */; };
+		323303B42180641B006E2219 /* WGCacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 323303B32180641B006E2219 /* WGCacheManager.m */; };
+		323303B721806488006E2219 /* WGWebImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 323303B621806488006E2219 /* WGWebImageManager.m */; };
+		323303BA2180651A006E2219 /* UIImageView+WGCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 323303B92180651A006E2219 /* UIImageView+WGCache.m */; };
+		323303BC218065E8006E2219 /* default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 323303BB218065E8006E2219 /* default.jpg */; };
+		32CFA3C12181AF2000AC1F26 /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 32CFA3C02181AF2000AC1F26 /* NSString+MD5.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,7 +46,6 @@
 		3233037A21803F3E006E2219 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		3233037C21803F3E006E2219 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		3233037D21803F3E006E2219 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		3233038021803F3E006E2219 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3233038221803F3F006E2219 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3233038521803F3F006E2219 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3233038721803F3F006E2219 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +56,19 @@
 		3233039921803F3F006E2219 /* WGWebImageKitUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WGWebImageKitUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3233039D21803F3F006E2219 /* WGWebImageKitUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WGWebImageKitUITests.m; sourceTree = "<group>"; };
 		3233039F21803F3F006E2219 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		323303AB2180418C006E2219 /* WGImageShowViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGImageShowViewController.h; sourceTree = "<group>"; };
+		323303AC2180418C006E2219 /* WGImageShowViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WGImageShowViewController.m; sourceTree = "<group>"; };
+		323303AF21804FA5006E2219 /* NSFileManager+Path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Path.h"; sourceTree = "<group>"; };
+		323303B021804FA5006E2219 /* NSFileManager+Path.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Path.m"; sourceTree = "<group>"; };
+		323303B22180641B006E2219 /* WGCacheManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGCacheManager.h; sourceTree = "<group>"; };
+		323303B32180641B006E2219 /* WGCacheManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WGCacheManager.m; sourceTree = "<group>"; };
+		323303B521806488006E2219 /* WGWebImageManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WGWebImageManager.h; sourceTree = "<group>"; };
+		323303B621806488006E2219 /* WGWebImageManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WGWebImageManager.m; sourceTree = "<group>"; };
+		323303B82180651A006E2219 /* UIImageView+WGCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImageView+WGCache.h"; sourceTree = "<group>"; };
+		323303B92180651A006E2219 /* UIImageView+WGCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+WGCache.m"; sourceTree = "<group>"; };
+		323303BB218065E8006E2219 /* default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = default.jpg; sourceTree = "<group>"; };
+		32CFA3BF2181AF2000AC1F26 /* NSString+MD5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		32CFA3C02181AF2000AC1F26 /* NSString+MD5.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,15 +119,18 @@
 		3233037821803F3E006E2219 /* WGWebImageKit */ = {
 			isa = PBXGroup;
 			children = (
+				323303AE21804EE9006E2219 /* WGWebImageKit */,
 				3233037921803F3E006E2219 /* AppDelegate.h */,
 				3233037A21803F3E006E2219 /* AppDelegate.m */,
 				3233037C21803F3E006E2219 /* ViewController.h */,
 				3233037D21803F3E006E2219 /* ViewController.m */,
-				3233037F21803F3E006E2219 /* Main.storyboard */,
+				323303AB2180418C006E2219 /* WGImageShowViewController.h */,
+				323303AC2180418C006E2219 /* WGImageShowViewController.m */,
 				3233038221803F3F006E2219 /* Assets.xcassets */,
 				3233038421803F3F006E2219 /* LaunchScreen.storyboard */,
 				3233038721803F3F006E2219 /* Info.plist */,
 				3233038821803F3F006E2219 /* main.m */,
+				323303BB218065E8006E2219 /* default.jpg */,
 			);
 			path = WGWebImageKit;
 			sourceTree = "<group>";
@@ -130,6 +151,23 @@
 				3233039F21803F3F006E2219 /* Info.plist */,
 			);
 			path = WGWebImageKitUITests;
+			sourceTree = "<group>";
+		};
+		323303AE21804EE9006E2219 /* WGWebImageKit */ = {
+			isa = PBXGroup;
+			children = (
+				323303AF21804FA5006E2219 /* NSFileManager+Path.h */,
+				323303B021804FA5006E2219 /* NSFileManager+Path.m */,
+				32CFA3BF2181AF2000AC1F26 /* NSString+MD5.h */,
+				32CFA3C02181AF2000AC1F26 /* NSString+MD5.m */,
+				323303B22180641B006E2219 /* WGCacheManager.h */,
+				323303B32180641B006E2219 /* WGCacheManager.m */,
+				323303B521806488006E2219 /* WGWebImageManager.h */,
+				323303B621806488006E2219 /* WGWebImageManager.m */,
+				323303B82180651A006E2219 /* UIImageView+WGCache.h */,
+				323303B92180651A006E2219 /* UIImageView+WGCache.m */,
+			);
+			path = WGWebImageKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -237,7 +275,7 @@
 			files = (
 				3233038621803F3F006E2219 /* LaunchScreen.storyboard in Resources */,
 				3233038321803F3F006E2219 /* Assets.xcassets in Resources */,
-				3233038121803F3E006E2219 /* Main.storyboard in Resources */,
+				323303BC218065E8006E2219 /* default.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,9 +300,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				323303B121804FA5006E2219 /* NSFileManager+Path.m in Sources */,
+				323303BA2180651A006E2219 /* UIImageView+WGCache.m in Sources */,
+				323303B721806488006E2219 /* WGWebImageManager.m in Sources */,
+				32CFA3C12181AF2000AC1F26 /* NSString+MD5.m in Sources */,
 				3233037E21803F3E006E2219 /* ViewController.m in Sources */,
 				3233038921803F3F006E2219 /* main.m in Sources */,
 				3233037B21803F3E006E2219 /* AppDelegate.m in Sources */,
+				323303B42180641B006E2219 /* WGCacheManager.m in Sources */,
+				323303AD2180418C006E2219 /* WGImageShowViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,14 +344,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		3233037F21803F3E006E2219 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3233038021803F3E006E2219 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		3233038421803F3F006E2219 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -438,6 +474,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 49T87S5RLN;
 				INFOPLIST_FILE = WGWebImageKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,6 +492,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 49T87S5RLN;
 				INFOPLIST_FILE = WGWebImageKit/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
